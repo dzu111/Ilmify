@@ -1,0 +1,12 @@
+# Ignore Database Credentials
+config/db_connect.php
+db_connect.php
+*.env
+
+# Ignore User Uploads (Too heavy for Git)
+uploads/
+images/student_uploads/
+
+# Ignore System Files
+.DS_Store
+Thumbs.db

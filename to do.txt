@@ -1,0 +1,70 @@
+
+Role:
+1. Student
+2. Parent
+3. Teacher
+4. Admin
+
+
+
+Student side:
+1. content will be available weekly until full
+2. Repeat quiz still gain xp but low
+3. remove thumbnail...
+4. fix quest, note, video tracking
+5. have focus mode for online class (When click will show only current class content, only available when there is class, auto Attendance)
+6. student sidebar will have dropdown on subject and the other option will follow the subject.
+
+
+
+parent side:
+1. teacher info, remarks
+
+Teacher sides:
+1. there will be subject, in subject will have weeks, and teacher can modify week content.
+2. Teacher can manage students. 
+3. teacher control the student view, when click note, student will see the note, when click video student will see the video and so on.
+4. class schedule, manage class 
+5. Curriculum Builder (Preparation Mode)
+   Refines your Point 1: "Subject > Weeks > Content"
+   The Change: Separate "Content" from "Classes."
+   Feature: "Master Subject Repository"
+   Teacher selects "Mathematics Form 4" (The Subject).
+   Teacher adds "Week 1", "Week 2".
+   Teacher uploads files (PDFs, YouTube Links, Quizzes) into these weeks.
+   Crucial Fix: This content is hidden from students until the teacher toggles "Publish."
+6. The "Live Command Center" (Execution Mode)
+   Refines your Point 3: "Control the student view"
+   The Change: This only happens during a scheduled class.
+   Teacher sees a list of active classes (e.g., "Monday 8 PM Group").
+   Teacher clicks [ START CLASS ].
+   The "Push" Buttons: Next to every note/video in the curriculum, there is a "🚀 Push to Screen" button.
+   Logic: When clicked, everyone in that specific class sees that specific content immediately.
+7. Class & Attendance Management
+   Refines your Point 4: "Manage class schedule"
+   The Change: Automate the "boring stuff."
+   Feature: "Attendance Auto-Logger"
+   When a student enters the "Live Class" (clicks the link), the system marks them "Present" automatically.
+   Teacher View: A simple list showing "Who is here" vs "Who is absent" in real-time.
+   Manual Override: Teacher can manually mark a student as "Excused."
+8. Student Progress Tracker (The Missing Piece)
+   Refines your Point 2: "Manage students"
+   The Fix: Teachers should not manage billing or passwords (that is Admin work). Teachers should manage Academic Performance.
+   Feature: "The Gradebook"
+   Teacher can see a table of their students.
+   Columns: Quiz 1 Score, Quiz 2 Score, Last Login Date.
+   Action: If a student is failing, the Teacher can click a button to "Send Alert to Parent" (Template Email).
+📚 My Subjects	Upload & Organize. (Add Week 1 notes, create Quiz 2). This is done anytime.
+🔴 Live Control	Teach. (Start Class, Push Content to screens, See who is online). This is done during class.
+📊 Student Reports	Monitor. (Check quiz scores, see who missed class). This is done weekly.
+🗓️ Schedule	Plan. (Set dates for future classes).
+
+Feature	                                          Admin (You)	                                            Teacher
+Schedule Class	Creates the Class.        (e.g., "Sets Math F4 to Mondays 8 PM").	          Read-Only. Sees "Next Class: Monday 8 PM" on their dashboard.
+Assign Students	Enrolls Students.         Adds "Ali" to "Math Group A".	                    View-Only. Sees "Ali" in their student list.
+Curriculum	                              Can view/audit.                                   Uploads. Creates the actual notes/videos.
+Live Control	                            Can monitor.	                                    Executes. Starts the class and pushes content.
+
+
+Admin side:
+1. The Dashboard (The Cockpit)When you log in, you shouldn't see tables immediately. You need a Business Overview to know the health of your center.Key Metrics to Display:Total Revenue (This Month): RM 15,000 (Calculated from payments table).Active Students: 95 / 100 (Who paid this month).Active Classes: 12.Pending Issues: "3 Students Expiring Soon", "1 Teacher absent last week."2. User Management (HR & CRM)You are the only one who can add people to the system. This prevents unauthorized access.A. Manage TeachersCreate Account: You generate their email/password.Assign Subjects: "Teacher Sarah can teach Math and Science."Payroll View: See how many classes they conducted this month (based on the is_live logs we discussed earlier).B. Manage StudentsRegistration: You create their account after they fill a Google Form or pay.Reset Password: When a student forgets their password, they WhatsApp you, and you click "Reset" here.Subscription Status: You can manually override their expiry date (e.g., "Give Ali 5 extra days").3. Logistics (The Scheduler)This is the most critical part since you took this responsibility away from teachers.Feature: The Master ScheduleYou need a "Calendar View" where you can create slots.Action: Click "Monday 8 PM".Select: Subject ("Math Form 4").Select: Teacher ("Cikgu Sarah").Select: Recurrence ("Repeat every week for 2 months").Result: This populates the Teacher's dashboard with their schedule.Feature: Enrollment ManagerThis links students to the schedule.Interface: A dual-list box.Left: List of all active students.Right: List of students in "Math Form 4 Group A".Action: Select "Ali", "Abu", "Siti" $\rightarrow$ Click [ Add to Class > ].4. Financials (The Cashier)You need to track who has paid.View: Transaction HistoryAuto-Logged: When Billplz/Stripe succeeds, it appears here.Manual Entry: If a parent pays by Cash Transfer/CDM, you click [ + Add Manual Payment ] to unlock their account.View: Expiry WatchlistA list of students whose subscription expires in < 3 days.Action: Button to [ Send WhatsApp Reminder ].The Admin Workflow (Day-to-Day)Here is a typical scenario of how the Admin interacts with the system:New Student Joins:Parent contacts you. You agree on a package.Admin: Goes to Add User $\rightarrow$ Creates "Student Ali".Admin: Goes to Enrollments $\rightarrow$ Adds Ali to "Math F4" and "Science F4".Admin: Goes to Payments $\rightarrow$ Logs "RM100 Received".Scheduling a New Term:Admin: Goes to Subjects $\rightarrow$ Creates "Form 5 Biology".Admin: Goes to Schedule $\rightarrow$ Creates slots for Fridays at 9 PM.Admin: Assigns "Teacher David".Result: Teacher David logs in and sees the new class. Students enrolled see the new subject card.
