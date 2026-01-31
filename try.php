@@ -26,7 +26,7 @@ if (isset($_POST['add_content'])) {
     $conn->query("INSERT INTO course_content (week_id, type, title, content_url) VALUES ('$week_id', '$type', '$title', '$url')");
 }
 ?>
-
+n
 <!DOCTYPE html>
 <html lang="en">
 <head>
