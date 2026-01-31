@@ -1,0 +1,235 @@
+/* Ilmify / StudyQuest Premium Dark Theme */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+:root {
+    /* Brand Colors */
+    --primary: #6C5DD3;
+    --primary-light: #8B80F9;
+    --primary-dark: #5044A5;
+    --accent: #FF754C;
+    /* Soft Coral */
+    --secondary: #6F767E;
+
+    /* Backgrounds */
+    --bg-main: #11142D;
+    --bg-card: #1F2128;
+    --bg-sidebar: #1F2128;
+    /* Same as card for seamless look or slightly different */
+
+    /* Text */
+    --text-main: #FFFFFF;
+    --text-muted: #808191;
+    --text-dark: #11142D;
+
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, #6C5DD3 0%, #8B80F9 100%);
+    --gradient-glass: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.03));
+
+    /* Effects */
+    --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+    --shadow-card: 0 10px 40px rgba(0, 0, 0, 0.2);
+    --radius-sm: 12px;
+    --radius-md: 20px;
+    --radius-lg: 30px;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    overflow-x: hidden;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 10px;
+}
+
+/* Utilities */
+.glass-card {
+    background: var(--bg-card);
+    border: var(--glass-border);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-card);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.text-gradient {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.bg-glass {
+    background: var(--gradient-glass);
+    backdrop-filter: blur(10px);
+    border: var(--glass-border);
+}
+
+/* Buttons */
+.btn-primary-glow {
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 10px 24px;
+    font-weight: 600;
+    transition: all 0.3s;
+    box-shadow: 0 4px 15px rgba(108, 93, 211, 0.3);
+}
+
+.btn-primary-glow:hover {
+    background: var(--primary-light);
+    color: white;
+    box-shadow: 0 6px 20px rgba(108, 93, 211, 0.5);
+    transform: translateY(-2px);
+}
+
+.btn-accent-glow {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 8px 20px;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(255, 117, 76, 0.3);
+    transition: all 0.3s;
+}
+
+.btn-accent-glow:hover {
+    background: #FF8F6B;
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Sidebar Styles */
+.sidebar-wrapper {
+    width: 260px;
+    background: var(--bg-sidebar);
+    min-height: 100vh;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.nav-link {
+    color: var(--text-muted);
+    font-weight: 500;
+    padding: 12px 20px;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.nav-link:hover {
+    color: var(--text-main);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.nav-link.active,
+.active-btn {
+    background: var(--primary);
+    color: white;
+    box-shadow: 0 5px 15px rgba(108, 93, 211, 0.3);
+}
+
+.nav-link i,
+.icon {
+    margin-right: 12px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Dashboard Levels */
+.level-card {
+    background: var(--gradient-primary);
+    border-radius: var(--radius-md);
+    padding: 30px;
+    position: relative;
+    overflow: hidden;
+    color: white;
+}
+
+.level-badge {
+    position: absolute;
+    bottom: -5px;
+    right: -5px;
+    background: var(--accent);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 0.7rem;
+    font-weight: bold;
+}
+
+/* Content Lists */
+.card-slider-container {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 20px;
+    gap: 20px;
+}
+
+.game-card {
+    min-width: 260px;
+    padding: 20px;
+}
+
+.content-thumb {
+    height: 140px;
+    background-color: #000;
+    border-radius: var(--radius-sm);
+    margin-bottom: 15px;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+}
+
+.search-input {
+    background: var(--bg-card);
+    border: var(--glass-border);
+    color: white;
+    border-radius: var(--radius-sm);
+    padding: 10px 20px;
+}
+
+.search-input:focus {
+    background: var(--bg-card);
+    color: white;
+    border-color: var(--primary);
+    box-shadow: none;
+}
+
+.live-pulse {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(255, 82, 82, 0.4);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(255, 82, 82, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(255, 82, 82, 0);
+    }
+}

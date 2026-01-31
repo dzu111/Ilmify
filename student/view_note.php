@@ -11,6 +11,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
 
 $id = $_GET['id'] ?? 0;
 $student_id = $_SESSION['user_id'];
+$is_embedded = (isset($_GET['embedded']) && $_GET['embedded'] == 'true');
 
 // --- [NEW] QUEST TRACKING LOGIC ---
 $stmt = $pdo->prepare("INSERT IGNORE INTO student_reads (student_id, material_id) VALUES (?, ?)");
@@ -41,12 +42,12 @@ $ext = strtolower(pathinfo($note['file_path'], PATHINFO_EXTENSION));
 
     <style>
         .viewer-container {
-            height: 85vh; /* Tall enough for reading */
+            height: <?php echo $is_embedded ? '100vh' : '85vh'; ?>; /* Full height if embedded */
             background: #525659; /* PDF Viewer Grey */
-            border-radius: 15px;
+            border-radius: <?php echo $is_embedded ? '0' : '15px'; ?>;
             overflow: hidden; /* Hide scrollbars if content fits */
             overflow-y: auto; /* Allow scrolling inside the container */
-            border: 4px solid #fff;
+            border: <?php echo $is_embedded ? 'none' : '4px solid #fff'; ?>;
             box-shadow: 0 10px 30px rgba(0,0,0,0.2);
             position: relative;
         }
@@ -75,6 +76,7 @@ $ext = strtolower(pathinfo($note['file_path'], PATHINFO_EXTENSION));
 </head>
 <body>
 
+<?php if(!$is_embedded): ?>
 <nav class="navbar navbar-dark bg-dark d-md-none p-3">
     <div class="container-fluid">
         <span class="navbar-brand fw-bold text-warning">📖 Library</span>
@@ -93,15 +95,19 @@ $ext = strtolower(pathinfo($note['file_path'], PATHINFO_EXTENSION));
         <?php include 'sidebar.php'; ?>
     </div>
 </div>
+<?php endif; ?>
 
 <div class="d-flex">
     
+    <?php if(!$is_embedded): ?>
     <div class="d-none d-md-block">
         <?php include 'sidebar.php'; ?>
     </div>
+    <?php endif; ?>
 
-    <div class="flex-grow-1 p-3 p-md-4 bg-light" style="height: 100vh; overflow-y: hidden;">
+    <div class="flex-grow-1 <?php echo $is_embedded ? 'p-0' : 'p-3 p-md-4'; ?> bg-light" style="height: 100vh; overflow-y: hidden;">
         
+        <?php if(!$is_embedded): ?>
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
                 <a href="dashboard.php" class="text-decoration-none text-muted small">⬅ Back to Dashboard</a>
@@ -109,6 +115,7 @@ $ext = strtolower(pathinfo($note['file_path'], PATHINFO_EXTENSION));
             </div>
             <a href="<?php echo $file_url; ?>" download class="btn btn-outline-primary btn-sm rounded-pill">⬇️ Download File</a>
         </div>
+        <?php endif; ?>
 
         <div class="viewer-container">
             <?php if ($ext == 'pdf'): ?>

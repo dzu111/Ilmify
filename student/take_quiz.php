@@ -11,6 +11,8 @@ $stmt = $pdo->prepare("SELECT * FROM quizzes WHERE quiz_id = ?");
 $stmt->execute([$quiz_id]);
 $quiz = $stmt->fetch(PDO::FETCH_ASSOC);
 
+$is_embedded = (isset($_GET['embedded']) && $_GET['embedded'] == 'true');
+
 // 2. Fetch Questions
 $stmt = $pdo->prepare("SELECT * FROM questions WHERE quiz_id = ?");
 $stmt->execute([$quiz_id]);
@@ -31,10 +33,10 @@ $total_q = count($questions);
 
     <style>
         body { 
-            background: linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%); 
+            background: <?php echo $is_embedded ? 'transparent' : 'linear-gradient(135deg, #FFDEE9 0%, #B5FFFC 100%)'; ?>; 
             font-family: 'Fredoka', sans-serif;
             min-height: 100vh;
-            padding-bottom: 50px;
+            padding-bottom: <?php echo $is_embedded ? '0' : '50px'; ?>;
         }
 
         /* Battle Header */
@@ -177,12 +179,18 @@ $total_q = count($questions);
 
 <div class="container">
     
+    <?php if(!$is_embedded): ?>
     <div class="battle-header">
         <h1 class="fw-bold" style="color: #1A535C;"><?php echo htmlspecialchars($quiz['title']); ?></h1>
         <p class="mb-0 text-muted fs-5">
             🎯 <?php echo $total_q; ?> Questions • ⏳ Take your time!
         </p>
     </div>
+    <?php else: ?>
+    <div class="text-center mb-4 pt-3">
+         <span class="badge bg-warning text-dark fs-5">⚔️ <?php echo htmlspecialchars($quiz['title']); ?></span>
+    </div>
+    <?php endif; ?>
 
     <form action="submit_quiz.php" method="POST" id="quizForm">
         <input type="hidden" name="quiz_id" value="<?php echo $quiz_id; ?>">

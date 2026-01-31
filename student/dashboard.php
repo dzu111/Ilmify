@@ -35,17 +35,58 @@ $current_xp = $progress['current_xp'];
 $xp_needed = getXPNeeded($current_level); 
 $xp_percent = ($xp_needed > 0) ? ($current_xp / $xp_needed) * 100 : 0;
 
-// 3. FETCH RECENT NOTES
-$stmt = $pdo->query("SELECT * FROM materials ORDER BY created_at DESC LIMIT 5");
-$recent_notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+// FILTER BY SUBJECT
+$subject_id = $_GET['subject_id'] ?? null;
 
-// 4. FETCH ACTIVE QUIZZES
-$stmt = $pdo->query("SELECT * FROM quizzes ORDER BY quiz_id DESC LIMIT 5");
-$active_quizzes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+if ($subject_id) {
+    // 3. FETCH RECENT NOTES (Filtered)
+    $stmt = $pdo->prepare("SELECT m.* FROM materials m JOIN weeks w ON m.week_id = w.week_id WHERE m.type = 'note' AND w.subject_id = ? ORDER BY m.created_at DESC LIMIT 5");
+    $stmt->execute([$subject_id]);
+    $recent_notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// 5. FETCH LATEST VIDEOS
-$stmt = $pdo->query("SELECT * FROM videos ORDER BY created_at DESC LIMIT 5");
-$recent_videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    // 3b. FETCH READING SESSIONS (Filtered)
+    $stmt = $pdo->prepare("SELECT m.* FROM materials m JOIN weeks w ON m.week_id = w.week_id WHERE m.type = 'reading_session' AND w.subject_id = ? ORDER BY m.created_at DESC LIMIT 5");
+    $stmt->execute([$subject_id]);
+    $recent_reading_sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // 4. FETCH ACTIVE QUIZZES (Filtered)
+    $stmt = $pdo->prepare("SELECT q.* FROM quizzes q JOIN weeks w ON q.week_id = w.week_id WHERE w.subject_id = ? ORDER BY q.quiz_id DESC LIMIT 5");
+    $stmt->execute([$subject_id]);
+    $active_quizzes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // 5. FETCH LATEST VIDEOS (Filtered)
+    $stmt = $pdo->prepare("SELECT v.* FROM videos v JOIN weeks w ON v.week_id = w.week_id WHERE w.subject_id = ? ORDER BY v.created_at DESC LIMIT 5");
+    $stmt->execute([$subject_id]);
+    $recent_videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} else {
+    // 3. FETCH RECENT NOTES (All)
+    $stmt = $pdo->query("SELECT * FROM materials WHERE type = 'note' ORDER BY created_at DESC LIMIT 5");
+    $recent_notes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // 3b. FETCH READING SESSIONS (All)
+    $stmt = $pdo->query("SELECT * FROM materials WHERE type = 'reading_session' ORDER BY created_at DESC LIMIT 5");
+    $recent_reading_sessions = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // 4. FETCH ACTIVE QUIZZES (All)
+    $stmt = $pdo->query("SELECT * FROM quizzes ORDER BY quiz_id DESC LIMIT 5");
+    $active_quizzes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // 5. FETCH LATEST VIDEOS (All)
+    $stmt = $pdo->query("SELECT * FROM videos ORDER BY created_at DESC LIMIT 5");
+    $recent_videos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// 5.5 ACTIVE LIVE CLASS
+$live_sql = "SELECT ls.session_id, c.class_name 
+             FROM live_sessions ls
+             JOIN enrollments e ON ls.class_id = e.class_id
+             JOIN classes c ON ls.class_id = c.class_id
+             WHERE e.student_id = ? 
+             AND ls.ended_at IS NULL
+             ORDER BY ls.started_at DESC LIMIT 1";
+$stmt = $pdo->prepare($live_sql);
+$stmt->execute([$student_id]);
+$active_live_session = $stmt->fetch(PDO::FETCH_ASSOC);
 
 // 6. FETCH LATEST ANNOUNCEMENT
 $stmt = $pdo->query("SELECT * FROM announcements ORDER BY created_at DESC LIMIT 1");
@@ -149,8 +190,8 @@ $announcement = $stmt->fetch(PDO::FETCH_ASSOC);
 
     <div class="flex-grow-1 p-3 p-md-4" style="height: 100vh; overflow-y: auto;">
         
-        <div class="row mb-4">
-            <div class="col-12">
+        <div class="row mb-4 align-items-center">
+            <div class="col">
                 <form action="search_results.php" method="GET">
                     <div class="input-group input-group-lg shadow-sm">
                         <span class="input-group-text bg-white border-0 ps-3 ps-md-4">🔍</span>
@@ -159,6 +200,15 @@ $announcement = $stmt->fetch(PDO::FETCH_ASSOC);
                     </div>
                 </form>
             </div>
+            
+            <?php if($active_live_session): ?>
+            <div class="col-auto ms-2">
+                <a href="focus_mode.php?session_id=<?php echo $active_live_session['session_id']; ?>" 
+                   class="btn btn-danger btn-lg rounded-pill px-4 fw-bold live-pulse d-flex align-items-center gap-2 shadow">
+                    <span>🔴</span> LIVE NOW
+                </a>
+            </div>
+            <?php endif; ?>
         </div>
 
         <?php if ($announcement): ?>
@@ -220,7 +270,7 @@ $announcement = $stmt->fetch(PDO::FETCH_ASSOC);
 
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h4 class="fw-bold text-secondary">📖 Notes</h4>
-            <a href="notes.php" class="btn btn-outline-primary rounded-pill btn-sm px-3">See All</a>
+            <a href="view_all.php?type=note<?php echo $subject_id ? '&subject_id='.$subject_id : ''; ?>" class="btn btn-outline-primary rounded-pill btn-sm px-3">See All</a>
         </div>
         
         <div class="card-slider-container">
@@ -242,8 +292,31 @@ $announcement = $stmt->fetch(PDO::FETCH_ASSOC);
         </div>
 
         <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+            <h4 class="fw-bold text-secondary">📑 Reading Sessions</h4>
+            <a href="view_all.php?type=reading_session<?php echo $subject_id ? '&subject_id='.$subject_id : ''; ?>" class="btn btn-outline-info rounded-pill btn-sm px-3">See All</a>
+        </div>
+        
+        <div class="card-slider-container">
+            <?php if(count($recent_reading_sessions) > 0): ?>
+                <?php foreach($recent_reading_sessions as $rs): ?>
+                    <div class="card game-card p-3">
+                        <div class="card-body p-0">
+                            <h5 class="card-title fw-bold text-info text-truncate"><?php echo htmlspecialchars($rs['title']); ?></h5>
+                            <p class="card-text text-muted small mb-3" style="height: 40px; overflow: hidden;">
+                                <?php echo htmlspecialchars($rs['description'] ?? 'No description.'); ?>
+                            </p>
+                           <a href="view_note.php?id=<?php echo $rs['material_id']; ?>" class="btn btn-light w-100 text-info fw-bold border">View Document</a>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p class="text-muted ms-2">No reading sessions available yet.</p>
+            <?php endif; ?>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
             <h4 class="fw-bold text-secondary">🎥 Video Gallery</h4>
-            <a href="videos.php" class="btn btn-outline-danger rounded-pill btn-sm px-3">See All</a>
+            <a href="view_all.php?type=video<?php echo $subject_id ? '&subject_id='.$subject_id : ''; ?>" class="btn btn-outline-danger rounded-pill btn-sm px-3">See All</a>
         </div>
 
         <div class="card-slider-container">
@@ -269,7 +342,7 @@ $announcement = $stmt->fetch(PDO::FETCH_ASSOC);
 
         <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
             <h4 class="fw-bold text-secondary">⚔️ Active Battles</h4>
-            <a href="quiz.php" class="btn btn-outline-warning text-dark rounded-pill btn-sm px-3">See All</a>
+            <a href="view_all.php?type=quiz<?php echo $subject_id ? '&subject_id='.$subject_id : ''; ?>" class="btn btn-outline-warning text-dark rounded-pill btn-sm px-3">See All</a>
         </div>
 
         <div class="card-slider-container">

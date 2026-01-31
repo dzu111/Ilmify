@@ -26,6 +26,16 @@ $total_quizzes = $stmt->fetchColumn();
 $stmt = $pdo->query("SELECT COUNT(*) FROM materials");
 $total_materials = $stmt->fetchColumn();
 
+// --- NEW METRICS ---
+
+// Total Revenue (Completed)
+$stmt = $pdo->query("SELECT SUM(amount) FROM payments WHERE status = 'completed'");
+$total_revenue = $stmt->fetchColumn() ?: 0;
+
+// Active Live Classes
+$stmt = $pdo->query("SELECT COUNT(*) FROM live_sessions WHERE ended_at IS NULL");
+$active_classes = $stmt->fetchColumn();
+
 // 2. Fetch Recent Users (Instead of Access Logs)
 $stmt = $pdo->query("SELECT full_name, role, created_at FROM users ORDER BY created_at DESC LIMIT 5");
 $recent_users = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -63,6 +73,9 @@ $recent_users = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <a href="manage_users.php" class="btn btn-primary">
                         👥 Manage Users
                     </a>
+                    <a href="payments.php" class="btn btn-warning text-dark fw-bold">
+                        💰 Manage Finance
+                    </a>
                     <a href="upload_material.php" class="btn btn-success">
                         📜 Upload Note
                     </a>
@@ -71,28 +84,40 @@ $recent_users = $stmt->fetchAll(PDO::FETCH_ASSOC);
         </div>
 
         <div class="row g-4 mb-4">
+            <!-- Revenue -->
+            <div class="col-md-3">
+                <div class="card stat-card bg-success text-white p-3 border-0 shadow-sm">
+                    <h3>RM <?php echo number_format($total_revenue, 2); ?></h3>
+                    <h6>Total Revenue</h6>
+                </div>
+            </div>
+            
+            <!-- Active Classes -->
+            <div class="col-md-3">
+                <div class="card stat-card <?php echo ($active_classes > 0) ? 'bg-danger text-white' : 'bg-secondary text-white'; ?> p-3 border-0 shadow-sm">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h3><?php echo $active_classes; ?></h3>
+                        <?php if($active_classes > 0): ?>
+                            <span class="spinner-grow spinner-grow-sm" role="status"></span>
+                        <?php endif; ?>
+                    </div>
+                    <h6>Live Classes Now</h6>
+                </div>
+            </div>
+
+            <!-- Students -->
             <div class="col-md-3">
                 <div class="card stat-card bg-primary text-white p-3 border-0 shadow-sm">
                     <h3><?php echo $total_students; ?></h3>
                     <h6>Active Heroes (Students)</h6>
                 </div>
             </div>
-            <div class="col-md-3">
-                <div class="card stat-card bg-success text-white p-3 border-0 shadow-sm">
-                    <h3><?php echo $total_parents; ?></h3>
-                    <h6>Guardians (Parents)</h6>
-                </div>
-            </div>
+            
+            <!-- Quizzes -->
             <div class="col-md-3">
                 <div class="card stat-card bg-warning text-dark p-3 border-0 shadow-sm">
                     <h3><?php echo $total_quizzes; ?></h3>
                     <h6>Active Quests</h6>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card stat-card bg-info text-white p-3 border-0 shadow-sm">
-                    <h3><?php echo $total_materials; ?></h3>
-                    <h6>Knowledge Scrolls</h6>
                 </div>
             </div>
         </div>

@@ -3,16 +3,16 @@
 
 // 1. HOST: This is usually sql300.infinityfree.com or similar. 
 // Check your "MySQL Host Name" in the panel to be sure.
-$host = 'sql305.infinityfree.com'; 
+$host = 'localhost'; 
 
 // 2. DB NAME: Your database name
-$dbname = 'if0_40841695_studyquest'; 
+$dbname = 'ilmify'; 
 
 // 3. USERNAME: I found this in your error log!
-$username = 'if0_40841695'; 
+$username = 'root'; 
 
 // 4. PASSWORD: You must copy this from the InfinityFree "Account Details" section
-$password = 'QSN4668merah'; 
+$password = ''; 
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);

@@ -10,6 +10,8 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'student') {
 }
 
 $id = $_GET['id'] ?? 0;
+$is_embedded = (isset($_GET['embedded']) && $_GET['embedded'] == 'true');
+
 
 // 1. Fetch Video Details
 $stmt = $pdo->prepare("SELECT * FROM videos WHERE video_id = ?");
@@ -39,11 +41,11 @@ $embedUrl = $videoId ? "https://www.youtube.com/embed/" . $videoId . "?autoplay=
 
         /* Cinema Viewer Container */
         .viewer-container {
-            height: 75vh; /* Takes up 75% of the screen height */
+            height: <?php echo $is_embedded ? '100vh' : '75vh'; ?>; /* Full height if embedded */
             background: #000;
-            border-radius: 20px;
+            border-radius: <?php echo $is_embedded ? '0' : '20px'; ?>;
             overflow: hidden;
-            border: 4px solid #fff;
+            border: <?php echo $is_embedded ? 'none' : '4px solid #fff'; ?>;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             position: relative;
         }
@@ -59,6 +61,7 @@ $embedUrl = $videoId ? "https://www.youtube.com/embed/" . $videoId . "?autoplay=
 </head>
 <body>
 
+<?php if(!$is_embedded): ?>
 <nav class="navbar navbar-dark bg-dark d-md-none p-3">
     <div class="container-fluid">
         <span class="navbar-brand fw-bold text-warning">⚡ StudyQuest</span>
@@ -77,15 +80,19 @@ $embedUrl = $videoId ? "https://www.youtube.com/embed/" . $videoId . "?autoplay=
         <?php include 'sidebar.php'; ?>
     </div>
 </div>
+<?php endif; ?>
 
 <div class="d-flex">
     
+    <?php if(!$is_embedded): ?>
     <div class="d-none d-md-block">
         <?php include 'sidebar.php'; ?>
     </div>
+    <?php endif; ?>
 
-    <div class="flex-grow-1 p-3 p-md-4" style="height: 100vh; overflow-y: auto;">
+    <div class="flex-grow-1 <?php echo $is_embedded ? 'p-0' : 'p-3 p-md-4'; ?>" style="height: 100vh; overflow-y: auto;">
         
+        <?php if(!$is_embedded): ?>
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div>
                 <a href="dashboard.php" class="text-decoration-none text-muted small">⬅ Back to Dashboard</a>
@@ -93,6 +100,7 @@ $embedUrl = $videoId ? "https://www.youtube.com/embed/" . $videoId . "?autoplay=
             </div>
             <a href="videos.php" class="btn btn-outline-danger rounded-pill fw-bold">📺 More Videos</a>
         </div>
+        <?php endif; ?>
 
         <div class="viewer-container">
             <?php if ($videoId): ?>
@@ -112,12 +120,14 @@ $embedUrl = $videoId ? "https://www.youtube.com/embed/" . $videoId . "?autoplay=
             <?php endif; ?>
         </div>
 
+        <?php if(!$is_embedded): ?>
         <div class="mt-4 p-4 bg-white rounded-4 shadow-sm">
             <h5 class="fw-bold text-secondary">About this Video</h5>
             <p class="text-muted mb-0">
                 <?php echo nl2br(htmlspecialchars($video['description'] ?? 'No description available for this video.')); ?>
             </p>
         </div>
+        <?php endif; ?>
 
     </div>
 </div>

@@ -20,15 +20,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['edit_user'])) {
     $password = trim($_POST['edit_password']);
     
     if ($name && $email) {
+        $expiry = !empty($_POST['edit_expiry']) ? $_POST['edit_expiry'] : NULL;
+        
         if (!empty($password)) {
             // Update with new password
             $hashed = password_hash($password, PASSWORD_DEFAULT);
-            $stmt = $pdo->prepare("UPDATE users SET full_name=?, email=?, password=? WHERE user_id=?");
-            $stmt->execute([$name, $email, $hashed, $id]);
+            $stmt = $pdo->prepare("UPDATE users SET full_name=?, email=?, password=?, subscription_expiry=? WHERE user_id=?");
+            $stmt->execute([$name, $email, $hashed, $expiry, $id]);
         } else {
             // Update info only
-            $stmt = $pdo->prepare("UPDATE users SET full_name=?, email=? WHERE user_id=?");
-            $stmt->execute([$name, $email, $id]);
+            $stmt = $pdo->prepare("UPDATE users SET full_name=?, email=?, subscription_expiry=? WHERE user_id=?");
+            $stmt->execute([$name, $email, $expiry, $id]);
         }
         $message = "✅ User details updated successfully.";
     } else {
@@ -102,7 +104,10 @@ $users = $pdo->query("SELECT * FROM users ORDER BY role ASC, created_at DESC")->
 
     <div class="flex-grow-1 p-4" style="height: 100vh; overflow-y: auto;">
         
-        <h2 class="fw-bold text-danger mb-4">👥 User Command Center</h2>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold text-danger m-0">👥 User Command Center</h2>
+            <a href="add_user.php" class="btn btn-dark fw-bold">➕ Create New User</a>
+        </div>
 
         <?php if($message): ?><div class="alert alert-success alert-dismissible fade show"><?php echo $message; ?><button class="btn-close" data-bs-dismiss="alert"></button></div><?php endif; ?>
         <?php if($error): ?><div class="alert alert-danger alert-dismissible fade show"><?php echo $error; ?><button class="btn-close" data-bs-dismiss="alert"></button></div><?php endif; ?>
@@ -115,6 +120,7 @@ $users = $pdo->query("SELECT * FROM users ORDER BY role ASC, created_at DESC")->
                         <th>Name</th>
                         <th>Email</th>
                         <th>Role</th>
+                        <th>Subscription</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -137,8 +143,26 @@ $users = $pdo->query("SELECT * FROM users ORDER BY role ASC, created_at DESC")->
                                 </span>
                             </td>
                             <td>
+                                <?php if($u['role'] == 'student'): ?>
+                                    <?php 
+                                        $exp = $u['subscription_expiry']; 
+                                        if($exp):
+                                            $days_left = (strtotime($exp) - time()) / (60 * 60 * 24);
+                                            $badge = ($days_left > 0) ? 'bg-success' : 'bg-danger';
+                                    ?>
+                                        <span class="badge <?php echo $badge; ?>">
+                                            <?php echo date('M d, Y', strtotime($exp)); ?>
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="badge bg-secondary">No Sub</span>
+                                    <?php endif; ?>
+                                <?php else: ?>
+                                    <small class="text-muted">-</small>
+                                <?php endif; ?>
+                            </td>
+                            <td>
                                 <button class="btn btn-outline-primary btn-sm rounded-pill px-3 me-1" 
-                                    onclick="openEditModal(<?php echo $u['user_id']; ?>, '<?php echo addslashes($u['full_name']); ?>', '<?php echo $u['email']; ?>')">
+                                    onclick="openEditModal(<?php echo $u['user_id']; ?>, '<?php echo addslashes($u['full_name']); ?>', '<?php echo $u['email']; ?>', '<?php echo $u['subscription_expiry']; ?>')">
                                     ✏️ Edit
                                 </button>
                                 
@@ -179,6 +203,11 @@ $users = $pdo->query("SELECT * FROM users ORDER BY role ASC, created_at DESC")->
                         <label class="form-label">New Password (Optional)</label>
                         <input type="text" name="edit_password" class="form-control" placeholder="Leave blank to keep current">
                     </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label">Subscription Expiry (Student Only)</label>
+                        <input type="date" name="edit_expiry" id="edit_expiry" class="form-control">
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -191,10 +220,11 @@ $users = $pdo->query("SELECT * FROM users ORDER BY role ASC, created_at DESC")->
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    function openEditModal(id, name, email) {
+    function openEditModal(id, name, email, expiry) {
         document.getElementById('edit_id').value = id;
         document.getElementById('edit_name').value = name;
         document.getElementById('edit_email').value = email;
+        document.getElementById('edit_expiry').value = expiry ? expiry.split(' ')[0] : '';
         new bootstrap.Modal(document.getElementById('editUserModal')).show();
     }
 </script>

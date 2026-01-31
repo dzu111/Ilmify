@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Redirect based on Role
         if ($user['role'] === 'admin') header("Location: ../admin/dashboard.php");
+        elseif ($user['role'] === 'teacher') header("Location: ../teacher/dashboard.php");
         elseif ($user['role'] === 'parent') header("Location: ../parent/dashboard.php");
         elseif ($user['role'] === 'student') header("Location: ../student/portal.php");
         exit;

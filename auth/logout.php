@@ -1,5 +1,5 @@
 <?php
 session_start();
 session_destroy();
-header("Location: /tinytale/auth/login.php");
+header("Location: /ilmify/auth/login.php");
 exit;

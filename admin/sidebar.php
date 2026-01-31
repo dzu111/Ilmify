@@ -16,28 +16,13 @@ $current_page = basename($_SERVER['PHP_SELF']);
             </a>
         </li>
         <li>
+            <a href="subjects.php" class="nav-link <?php echo ($current_page == 'subjects.php' || $current_page == 'subject_weeks.php' || $current_page == 'week_materials.php' || $current_page == 'quiz_builder.php') ? 'active-admin' : 'text-white'; ?>">
+                📚 Curriculum Engine
+            </a>
+        </li>
+        <li>
             <a href="manage_announcements.php" class="nav-link <?php echo ($current_page == 'manage_announcements.php') ? 'active-admin' : 'text-white'; ?>">
                 📢 Announcements
-            </a>
-        </li>
-        <li>
-            <a href="manage_materials.php" class="nav-link <?php echo ($current_page == 'manage_materials.php') ? 'active-admin' : 'text-white'; ?>">
-                📚 Library (Notes)
-            </a>
-        </li>
-        <li>
-            <a href="manage_videos.php" class="nav-link <?php echo ($current_page == 'manage_videos.php') ? 'active-admin' : 'text-white'; ?>">
-                🎥 Video Gallery
-            </a>
-        </li>
-        <li>
-            <a href="manage_quizzes.php" class="nav-link <?php echo ($current_page == 'manage_quizzes.php') ? 'active-admin' : 'text-white'; ?>">
-                ⚔️ Quests (Quizzes)
-            </a>
-        </li>
-         <li>
-            <a href="add_questions.php" class="nav-link <?php echo ($current_page == 'add_questions.php') ? 'active-admin' : 'text-white'; ?>">
-                ⚔️ Quests (Questions)
             </a>
         </li>
         <li>
@@ -45,8 +30,23 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 👥 Players (Users)
             </a>
         </li>
+        <li>
+            <a href="manage_classes.php" class="nav-link <?php echo ($current_page == 'manage_classes.php' || $current_page == 'manage_enrollment.php') ? 'active-admin' : 'text-white'; ?>">
+                🏫 Classes & Enrollment
+            </a>
+        </li>
+        <li>
+            <a href="schedule.php" class="nav-link <?php echo ($current_page == 'schedule.php') ? 'active-admin' : 'text-white'; ?>">
+                📅 Master Schedule
+            </a>
+        </li>
+        <li>
+            <a href="payments.php" class="nav-link <?php echo ($current_page == 'payments.php') ? 'active-admin' : 'text-white'; ?>">
+                💰 Financials
+            </a>
+        </li>
         <li class="nav-item">
-            <a href="add_admin.php" class="nav-link text-white <?php echo basename($_SERVER['PHP_SELF']) == 'add_admin.php' ? 'active bg-danger' : ''; ?>">
+            <a href="add_admin.php" class="nav-link text-white <?php echo basename($_SERVER['PHP_SELF']) == 'add_admin.php' ? 'active-admin' : ''; ?>">
                 🛡️ Recruit Admin
             </a>
         </li>
